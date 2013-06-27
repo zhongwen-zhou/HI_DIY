@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html lang='en'>
+  <head>
+    <meta charset="utf-8">
+    <link href="plugin/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="plugin/colorpicker/css/colorpicker.css" rel="stylesheet">
+    <script type="text/javascript" src="javascripts/jquery-dev.js"></script>
+    <script type="text/javascript" src="plugin/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="plugin/colorpicker/js/bootstrap-colorpicker.js"></script>
+    <style type="text/css">
+      #main_canvas{
+        height: 400px;
+        background: grey;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span2">
+          <ul class="nav nav-tabs nav-stacked">
+            <li id='tool_jx'>
+              矩形
+            </li>
+            <li id='tool_yx'>
+              圆形
+            </li>
+          </ul>
+        </div>
+        <div id='main_canvas' class="span6">
+
+        </div>
+        <div id='detail' class="span4">
+          <label for="text_size">字体大小</label>
+          <input type="range" id="text_size" name="points" min="1" max="10" />
+          <br/>
+          <div class="input-append color" data-color="rgb(255, 146, 180)" data-color-format="rgb">
+            <label for="background_color">背景颜色</label>
+            <input type="text" id="background_color" class="span5" value="" >
+            <span class="add-on"><i style="background-color: rgb(255, 146, 180)"></i></span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('#background_color').colorpicker();
+      $('#tool_jx').click(function(){
+        $('#main_canvas').append("<span>矩形</span>");
+      });
+    })
+  </script>
+</html>
