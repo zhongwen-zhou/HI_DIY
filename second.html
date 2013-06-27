@@ -4,7 +4,9 @@
     <meta charset="utf-8">
     <link href="plugin/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link href="plugin/colorpicker/css/colorpicker.css" rel="stylesheet">
+    <link href="plugin/jquery-ui/css/ui-lightness/jquery-ui.css" rel="stylesheet">
     <script type="text/javascript" src="javascripts/jquery-dev.js"></script>
+    <script type="text/javascript" src="plugin/jquery-ui/js/jquery-ui.js"></script>
     <script type="text/javascript" src="plugin/bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="plugin/colorpicker/js/bootstrap-colorpicker.js"></script>
     <style type="text/css">
@@ -20,10 +22,14 @@
         <div class="span2">
           <ul class="nav nav-tabs nav-stacked">
             <li id='tool_jx'>
-              矩形
+              <div id="source_jx" style="width:100px;height:100px;background: green;">
+                矩形
+              </div>
             </li>
             <li id='tool_yx'>
-              圆形
+              <div id="source_yx" style="width:100px;height:100px;background: red;">
+                圆形
+              </div>
             </li>
           </ul>
         </div>
@@ -43,13 +49,49 @@
         </div>
       </div>
     </div>
+
   </body>
   <script type="text/javascript">
+    var current_element = null;
     $(document).ready(function(){
       $('#background_color').colorpicker();
-      $('#tool_jx').click(function(){
-        $('#main_canvas').append("<span>矩形</span>");
+      $('#background_color').blur(function(){
+        var color = $(this).val();
+        current_element.css('background-color', color);
       });
+      $(document).on("click", ".current_element", function(){
+        current_element = $(this);
+      }); 
+      $( "#source_jx" ).draggable({
+        helper: "clone",
+        cursor: 'move', //鼠标样式
+        opacity: 0.8,  //拖拽时透明
+        start: function(event, ui){
+
+        },
+        stop: function(event, ui){
+
+        }
+      });
+      $("#source_yx" ).draggable();
+
+      $('#main_canvas').droppable({
+        drop: function(event,ui){
+          var d = $(ui.draggable[0]).clone();
+          if(d.hasClass('draggable')){
+          }else{
+            d.attr('id', null);
+            d.addClass('draggable');
+            d.addClass('current_element');
+            d.empty();
+            d.draggable();
+            d.resizable();
+            current_element = d;
+            $(this).append(d);
+          }
+        }
+      });
+
     })
   </script>
 </html>
