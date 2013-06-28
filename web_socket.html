@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html lang='en'>
+  <head>
+    <meta charset="utf-8">
+    <link href="plugin/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="plugin/colorpicker/css/colorpicker.css" rel="stylesheet">
+    <link href="plugin/jquery-ui/css/ui-lightness/jquery-ui.css" rel="stylesheet">
+    <script type="text/javascript" src="javascripts/jquery-dev.js"></script>
+    <script type="text/javascript" src="plugin/jquery-ui/js/jquery-ui.js"></script>
+    <script type="text/javascript" src="plugin/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="plugin/colorpicker/js/bootstrap-colorpicker.js"></script>
+    <script type="text/javascript" src="javascripts/jQueryRotate.js"></script>
+    <script type="text/javascript" src="javascripts/html2canvas.js"></script>
+</head>
+<body>
+</body>
+<script type="text/javascript">
+function ToggleConnectionClicked() {
+          if (SocketCreated && (ws.readyState == 0 || ws.readyState == 1)) {  
+                ws.close();
+            } else {
+                Log("准备连接到聊天服务器 ...");
+                try {
+                 ws = 
+                 new WebSocket("ws://" + document.getElementById("Connection").value);
+                  SocketCreated = true;
+                } catch (ex) {
+                  Log(ex, "ERROR");
+                  return;
+                }
+                document.getElementById("ToggleConnection").innerHTML = "断开";
+                ws.onopen = WSonOpen;
+                ws.onmessage = WSonMessage;
+                ws.onclose = WSonClose;
+                ws.onerror = WSonError;
+            }
+        };
+
+        function WSonOpen() {
+            Log("连接已经建立。", "OK");
+            $("#SendDataContainer").show("slow");
+        };
+
+        function WSonMessage(event) {
+            Log(event.data);            
+        };
+
+        function WSonClose() {
+            Log("连接关闭。", "ERROR");
+            document.getElementById("ToggleConnection").innerHTML = "连接";
+            $("#SendDataContainer").hide("slow");
+        };
+
+
+        function WSonError() {
+            Log("WebSocket错误。", "ERROR");
+        };
+</script>

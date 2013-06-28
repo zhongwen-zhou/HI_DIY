@@ -9,10 +9,14 @@
     <script type="text/javascript" src="plugin/jquery-ui/js/jquery-ui.js"></script>
     <script type="text/javascript" src="plugin/bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="plugin/colorpicker/js/bootstrap-colorpicker.js"></script>
+    <script type="text/javascript" src="javascripts/jQueryRotate.js"></script>
+    <script type="text/javascript" src="javascripts/html2canvas.js"></script>
+    
     <style type="text/css">
       #main_canvas{
-        height: 400px;
+        height: 800px;
         background: grey;
+        background-image: url('business/sc/tx.jpg');
       }
       .element_span{
         border:red solid thin;
@@ -48,12 +52,22 @@
         <div id='detail' class="span4">
           <label for="text_size">字体大小</label>
           <input type="range" id="text_size" name="points" min="1" max="10" />
+          <label for="text_spac">字体间距</label>
+          <input type="range" id="text_spac" name="points" min="1" max="10" />          
           <br/>
           <div class="input-append color" data-color="rgb(255, 146, 180)" data-color-format="rgb">
             <label for="background_color">背景颜色</label>
             <input type="text" id="background_color" class="span5" value="" >
             <span class="add-on"><i style="background-color: rgb(255, 146, 180)"></i></span>
           </div>
+          <label>
+            <input type='button' id="rotate_right" value="顺时针"/>
+          </label>
+          <label>
+            <input type='button' id="rotate_left" value="逆时针"/>
+          </label>
+
+          <input type='button' id="save_button" value="保存图片"/>
 
         </div>
       </div>
@@ -64,6 +78,29 @@
     var current_element = null;
     var current_element_count = 0;
     $(document).ready(function(){
+      $('#save_button').click(function(){
+        html2canvas($('#main_canvas'), {
+          onrendered: function(canvas) {
+            var dataUrl = canvas.toDataURL();
+            window.open(dataUrl, "toDataURL() image", "width=800, height=800");
+          },
+          width: 900,
+          height: 800
+        });
+
+      });
+      $('#rotate_left').click(function(){
+        var rotate = $(current_element).attr('rotate');
+        rotate = parseInt(rotate) + 10;
+        current_element.attr('rotate', rotate);
+        current_element.rotate(rotate);      
+      });
+      $('#rotate_right').click(function(){
+        var rotate = $(current_element).attr('rotate');
+        rotate = parseInt(rotate) - 10;
+        current_element.attr('rotate', rotate);
+        current_element.rotate(rotate);
+      });
       $('#background_color').colorpicker();
       $('#background_color').blur(function(){
         var color = $(this).val();
@@ -73,6 +110,10 @@
         var span = $(current_element).find(".element_span")[0];
         $(span).css('font-size', $(this).val()+"px");
       });
+      $('#text_spac').blur(function(){
+        var span = $(current_element).find(".element_span")[0];
+        $(span).css('letter-spacing', $(this).val()+"px");
+      });      
       $(document).on("click", ".current_element", function(){
         current_element = $(this);
       });
@@ -136,6 +177,7 @@
               d.attr('id', 'element_'+current_element_count);
               d.addClass('draggable');
               d.addClass('current_element');
+              d.attr('rotate', 0);
               var span = "<span id='element_span_"+current_element_count+"' class='span5 draggable element_span'></span>";
               var input = "<input id='element_text_"+current_element_count+"' class='element_text' type='text'/>";
               span = $(span);
