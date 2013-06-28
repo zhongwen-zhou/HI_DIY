@@ -14,6 +14,10 @@
         height: 400px;
         background: grey;
       }
+      .element_span{
+        border:red solid thin;
+        outline:#00ff00 dotted thick;
+      }
     </style>
   </head>
   <body>
@@ -31,6 +35,11 @@
                 圆形
               </div>
             </li>
+            <li id='tool_img'>
+              <div id="source_img" style="width:100px;height:100px;background: blue;">
+                <img id="source_imgxx" src="images/test.png" width="100px;" height="100px;"/>
+              </div>
+            </li>                       
           </ul>
         </div>
         <div id='main_canvas' class="span6">
@@ -53,15 +62,33 @@
   </body>
   <script type="text/javascript">
     var current_element = null;
+    var current_element_count = 0;
     $(document).ready(function(){
       $('#background_color').colorpicker();
       $('#background_color').blur(function(){
         var color = $(this).val();
         current_element.css('background-color', color);
       });
+      $('#text_size').blur(function(){
+        var span = $(current_element).find(".element_span")[0];
+        $(span).css('font-size', $(this).val()+"px");
+      });
       $(document).on("click", ".current_element", function(){
         current_element = $(this);
-      }); 
+      });
+      $(document).on("dblclick", ".current_element", function(){
+        var id = $(this).attr('id').split("_")[1]
+        var text = $("#element_text_"+id);
+        text.focus();
+        text.show();
+      });       
+      $(document).on("blur", ".element_text", function(){
+        var id = $(this).attr('id').split("_")[2]
+        var span = $("#element_span_"+id);
+        span.append($(this).val());
+        span.show();
+        $(this).hide();
+      });
       $( "#source_jx" ).draggable({
         helper: "clone",
         cursor: 'move', //鼠标样式
@@ -73,21 +100,58 @@
 
         }
       });
+      $( "#source_img" ).draggable({
+        helper: "clone",
+        cursor: 'move', //鼠标样式
+        opacity: 0.8,  //拖拽时透明
+        start: function(event, ui){
+
+        },
+        stop: function(event, ui){
+
+        }
+      });            
       $("#source_yx" ).draggable();
 
       $('#main_canvas').droppable({
         drop: function(event,ui){
           var d = $(ui.draggable[0]).clone();
+
           if(d.hasClass('draggable')){
           }else{
-            d.attr('id', null);
-            d.addClass('draggable');
-            d.addClass('current_element');
-            d.empty();
-            d.draggable();
-            d.resizable();
-            current_element = d;
-            $(this).append(d);
+            current_element_count ++;
+            if(d.attr('id') == 'source_img'){
+              var img = $(d[0].children[0]);
+              d.attr('id', 'element_'+current_element_count);
+              d.addClass('draggable');
+              d.addClass('current_element');
+              var image_url = "url("+img.attr('src')+")";
+              d.css('background-image', image_url);
+              d.empty();
+              d.draggable();
+              d.resizable();
+              current_element = d;
+              $(this).append(d);
+            }else{
+              d.attr('id', 'element_'+current_element_count);
+              d.addClass('draggable');
+              d.addClass('current_element');
+              var span = "<span id='element_span_"+current_element_count+"' class='span5 draggable element_span'></span>";
+              var input = "<input id='element_text_"+current_element_count+"' class='element_text' type='text'/>";
+              span = $(span);
+              input = $(input);
+              span.hide();
+              input.hide();
+              // span.resizable();
+              span.draggable();
+              d.empty();
+              d.append(span);
+              d.append(input);
+              d.draggable();
+              d.resizable();
+              current_element = d;
+              $(this).append(d);
+            }
           }
         }
       });
